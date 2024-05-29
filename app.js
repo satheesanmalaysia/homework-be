@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
+var cors = require('cors')
 var app = express();
 
 // view engine setup
@@ -31,6 +32,7 @@ app.use(bodyParser.json());
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 app.use(cors({
   origin: "https://homework-be.onrender.com"
 }
