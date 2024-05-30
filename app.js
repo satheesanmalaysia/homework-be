@@ -9,7 +9,20 @@ var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 var cors = require('cors')
 var app = express();
-
+app.use(cors())
+app.options('*', cors())
+app.use(function(req, res, next) {
+  // res.header("Access-Control-Allow-Origin", "*");
+  const allowedOrigins = ['http://localhost:3000','https://localhost:3000/', 'https://homework-be.onrender.com/api', "http://homework-be.onrender.com/api","https://homework-be.onrender.com/api","http://homework-be.onrender.com/api","http://homework-be.onrender.com","https://homework-be.onrender.com"];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+       res.setHeader('Access-Control-Allow-Origin', "*");
+  }
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization Access-Control-Allow-Origin");
+  res.header("Access-Control-Allow-credentials", true);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
+  next();
+});
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -35,18 +48,7 @@ app.use(function(req, res, next) {
 
 
 
-app.use(function(req, res, next) {
-  // res.header("Access-Control-Allow-Origin", "*");
-  const allowedOrigins = ['http://localhost:3000', 'https://homework-be.onrender.com/api', "http://homework-be.onrender.com/api","https://homework-be.onrender.com/api","http://homework-be.onrender.com/api","http://homework-be.onrender.com","https://homework-be.onrender.com"];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-       res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-credentials", true);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-  next();
-});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development

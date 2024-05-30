@@ -98,6 +98,8 @@ router.post("/homeworks", (req, res) => {
 
       const origin = req.headers.origin;
       if (allowedOrigins.includes(origin)) {
+        console.log('setting Access-Control-Allow-Origin');
+        console.log(origin);
         res.setHeader("Access-Control-Allow-Origin", origin);
       }
       res.header(
