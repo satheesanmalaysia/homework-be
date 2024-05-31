@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database");
-
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const SECRET_KEY = process.env.SECRET_KEY || 'rerer8343400123980';
+dotenv.config();
 const allowedOrigins = [
     "http://localhost:3000",
     "https://homework-be.onrender.com/api",
@@ -332,6 +335,52 @@ router.delete("/students/:id", (req, res) => {
         "GET, POST, PUT, DELETE, UPDATE"
       );
     res.json({ changes: this.changes });
+  });
+});
+
+// This is for demonstarting a protected route 
+
+const authenticateJWT = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (token) {
+      jwt.verify(token, SECRET_KEY, (err, user) => {
+          if (err) {
+              return res.sendStatus(403);
+          }
+          req.user = user;
+          next();
+      });
+  } else {
+      res.sendStatus(401);
+  }
+};
+
+// This endpoint will only accessable with valid access tocken 
+
+router.get("/homeworksnew", authenticateJWT, (req, res) => {
+  console.log('getting here')
+  db.all("SELECT * FROM Homework", (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    // Below Access-Control-Allow-Origin is for fixing a cors issue on render 
+    // We can avoid this if we are deploying in a standard server 
+ 
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.header("Access-Control-Allow-credentials", true);
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, UPDATE"
+    );
+    res.json({ data: rows });
   });
 });
 

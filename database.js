@@ -20,6 +20,10 @@ db.serialize(() => {
         status TEXT,
         download_url TEXT
     )`);
+
+    db.serialize(() => {
+        db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT, country TEXT)");
+    });
 });
 
 module.exports = db;
